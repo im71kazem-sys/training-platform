@@ -1,235 +1,227 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>منصة عماد كاظم للتدريب والتطوير | MARC21 & RDA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة عماد كاظم الشاملة | MARC21 & RDA Full Lab</title>
+    <script src="https://cdn.jsdelivr.net"></script>
+    <style>
+        :root { 
+            --primary: #2563eb; --secondary: #64748b; 
+            --success: #16a34a; --bg: #f1f5f9; 
+            --card-bg: #ffffff; --text: #1e293b;
+        }
+        body { font-family: 'Segoe UI', system-ui, Tahoma; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+        .container { max-width: 1200px; margin: auto; }
+        
+        /* Header */
+        .header { text-align: center; margin-bottom: 30px; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .training-modes { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 25px; }
+        
+        /* Buttons */
+        .btn-mode { padding: 10px 20px; border: 2px solid var(--primary); background: transparent; color: var(--primary); border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-mode:hover { background: var(--primary); color: white; }
+        .btn-clear { border-color: #ef4444; color: #ef4444; }
+        .btn-clear:hover { background: #ef4444; color: white; }
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+        /* Grid & Cards */
+        .marc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .card-title { background: #f8fafc; margin: -20px -20px 15px -20px; padding: 12px 20px; border-radius: 15px 15px 0 0; font-size: 0.95rem; font-weight: bold; color: var(--primary); border-bottom: 1px solid #e2e8f0; }
 
-<style>
-:root { --primary:#2c3e50; --accent:#4a90e2; --bg:#f4f7f9; }
-body { font-family: 'Segoe UI', Tahoma; background:var(--bg); padding:20px; }
-.container { max-width:1200px; margin:auto; background:white; padding:30px; border-radius:15px; }
-.training-modes { display:flex; gap:10px; justify-content:center; margin-bottom:20px; }
-.btn-sample { border:1px solid var(--primary); background:#fff; padding:8px 15px; border-radius:20px; cursor:pointer; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:15px; }
-.field-group { border:1px solid #ddd; padding:10px; border-radius:8px; }
-label { font-size:0.8em; font-weight:bold; display:flex; justify-content:space-between; }
-input { width:100%; padding:6px; margin-top:5px; }
-.help-q { color:var(--accent); text-decoration:none; border:1px solid var(--accent); border-radius:50%; width:18px; height:18px; display:inline-flex; justify-content:center; }
-.add-btn { background:var(--accent); color:white; border:none; border-radius:50%; width:20px; cursor:pointer; }
-.section-h { grid-column:1/-1; background:var(--primary); color:white; padding:8px; border-radius:5px; margin-top:15px; }
-.output-box { background:#1e272e; color:#00d8d6; padding:20px; border-radius:10px; margin-top:30px; }
-.actions { display:flex; justify-content:center; gap:10px; margin:20px 0; }
-.main-btn { padding:10px 20px; border:none; border-radius:5px; color:white; cursor:pointer; }
-</style>
+        /* Form */
+        .field-row { margin-bottom: 15px; }
+        label { display: block; font-size: 0.85rem; margin-bottom: 5px; font-weight: 600; color: var(--secondary); }
+        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; transition: 0.2s; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .tag-num { background: #dbeafe; color: #1e40af; padding: 2px 6px; border-radius: 4px; font-family: monospace; margin-left: 5px; }
+        
+        /* Footer Actions */
+        .actions { text-align: center; margin: 30px 0; display: flex; justify-content: center; gap: 15px; }
+        .btn-main { padding: 14px 40px; border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        /* Output Terminal */
+        .output-container { background: #0f172a; color: #38bdf8; padding: 25px; border-radius: 15px; font-family: 'Consolas', monospace; border: 4px solid #1e293b; }
+        .output-header { color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; }
+        pre { margin: 0; white-space: pre-wrap; font-size: 1rem; line-height: 1.5; }
+    </style>
 </head>
-
 <body>
+
 <div class="container">
-<h1 style="text-align:center">📚 منصة عماد كاظم للتدريب والتطوير</h1>
+    <div class="header">
+        <h1>📚 منصة عماد كاظم الشاملة للفهرسة</h1>
+        <p>النظام التدريبي المتكامل: MARC21 + قواعد RDA + الروابط الرقمية</p>
+    </div>
 
-<div class="training-modes">
-<button class="btn-sample" onclick="loadSample('book')">كتاب</button>
-<button class="btn-sample" onclick="loadSample('thesis')">أطروحة</button>
-<button class="btn-sample" onclick="loadSample('electronic')">إلكتروني</button>
-<button class="btn-sample" onclick="clearForm()">مسح</button>
-</div>
+    <div class="training-modes">
+        <button class="btn-mode" onclick="loadSample('book')">📖 كتاب وسلسلة</button>
+        <button class="btn-mode" onclick="loadSample('thesis')">🎓 أطروحة رقمية</button>
+        <button class="btn-mode" onclick="loadSample('electronic')">🌐 مورد إلكتروني (URL)</button>
+        <button class="btn-mode btn-clear" onclick="clearForm()">🧹 تفريغ النموذج</button>
+    </div>
 
-<form id="marcForm">
-<div class="grid">
+    <form id="marcForm">
+        <div class="marc-grid">
+            <!-- 1. الترقيم والتصنيف -->
+            <div class="card">
+                <div class="card-title">أرقام التقنين والتصنيف (0xx)</div>
+                <div class="field-row" data-tag="020">
+                    <label><span class="tag-num">020</span> الرقم المعياري ISBN</label>
+                    <input placeholder="مثال: 9789921712001">
+                </div>
+                <div class="field-row" data-tag="082">
+                    <label><span class="tag-num">082</span> تصنيف ديوي العشري</label>
+                    <input placeholder="مثال: 025.3">
+                </div>
+                <div class="field-row" data-tag="050">
+                    <label><span class="tag-num">050</span> تصنيف مكتبة الكونجرس</label>
+                    <input placeholder="مثال: Z663.12 .C65">
+                </div>
+            </div>
 
-<div class="section-h">المدخلات الرئيسية</div>
+            <!-- 2. العناوين والسلاسل -->
+            <div class="card">
+                <div class="card-title">بيانات العنوان والسلسلة (2xx-4xx)</div>
+                <div class="field-row" data-tag="100">
+                    <label><span class="tag-num">100</span> المؤلف الرئيسي</label>
+                    <input placeholder="اللقب، الاسم الأول">
+                </div>
+                <div class="field-row" data-tag="245">
+                    <label><span class="tag-num">245</span> العنوان الرئيسي</label>
+                    <input placeholder="العنوان : العنوان الفرعي / المسؤولية">
+                </div>
+                <div class="field-row" data-tag="490">
+                    <label><span class="tag-num">490</span> بيانات السلسلة (Series)</label>
+                    <input placeholder="اسم السلسلة ؛ رقم العدد">
+                </div>
+            </div>
 
-<div class="field-group repeatable" data-tag="100">
-<label>100 مؤلف
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
+            <!-- 3. الوصف المادي RDA -->
+            <div class="card">
+                <div class="card-title">الوصف المادي RDA (3xx)</div>
+                <div class="field-row" data-tag="300">
+                    <label><span class="tag-num">300</span> الوصف المادي</label>
+                    <input placeholder="ص، سم">
+                </div>
+                <div class="field-row" data-tag="336">
+                    <label><span class="tag-num">336</span> نوع المحتوى (Content)</label>
+                    <input value="نص (text)">
+                </div>
+                <div class="field-row" data-tag="337">
+                    <label><span class="tag-num">337</span> نوع الوسيط (Media)</label>
+                    <input value="غير مزود بجهاز (unmediated)">
+                </div>
+                <div class="field-row" data-tag="338">
+                    <label><span class="tag-num">338</span> نوع الناقل (Carrier)</label>
+                    <input value="مجلد (volume)">
+                </div>
+            </div>
 
-<div class="field-group repeatable" data-tag="110">
-<label>110 هيئة
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
+            <!-- 4. الملاحظات والروابط -->
+            <div class="card">
+                <div class="card-title">الملاحظات والوصول الرقمي (5xx-8xx)</div>
+                <div class="field-row" data-tag="500">
+                    <label><span class="tag-num">500</span> ملاحظة عامة</label>
+                    <input placeholder="مثال: يشتمل على كشافات وببليوجرافية">
+                </div>
+                <div class="field-row" data-tag="502">
+                    <label><span class="tag-num">502</span> ملاحظة الأطروحة</label>
+                    <input placeholder="رسالة ماجستير - جامعة...">
+                </div>
+                <div class="field-row" data-tag="856">
+                    <label><span class="tag-num">856</span> الرابط الإلكتروني (URL)</label>
+                    <input placeholder="http://www.example.com/book.pdf" style="direction: ltr;">
+                </div>
+                <div class="field-row" data-tag="650">
+                    <label><span class="tag-num">650</span> رأس الموضوع</label>
+                    <input>
+                </div>
+            </div>
+        </div>
+    </form>
 
-<div class="field-group repeatable" data-tag="111">
-<label>111 مؤتمر
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
+    <div class="actions">
+        <button onclick="updateDisplay()" class="btn-main" style="background:var(--primary)">🔄 توليد سجل مارك</button>
+        <button onclick="exportExcel()" class="btn-main" style="background:var(--success)">📊 حفظ كملف Excel</button>
+    </div>
 
-<div class="section-h">العنوان</div>
-
-<div class="field-group repeatable" data-tag="245">
-<label>245 عنوان
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="field-group repeatable" data-tag="246">
-<label>246 عنوان بديل
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="section-h">الموضوعات</div>
-
-<div class="field-group repeatable" data-tag="600">
-<label>600 شخص
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="field-group repeatable" data-tag="610">
-<label>610 هيئة
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="field-group repeatable" data-tag="611">
-<label>611 مؤتمر
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="field-group repeatable" data-tag="650">
-<label>650 موضوع عام
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="section-h">مداخل إضافية</div>
-
-<div class="field-group repeatable" data-tag="710">
-<label>710 هيئة إضافية
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="field-group repeatable" data-tag="711">
-<label>711 مؤتمر إضافي
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-<div class="field-group repeatable" data-tag="130">
-<label>130 عنوان موحد
-<span>
-<a href="https://www.bibalex.org/als/marcA/homepage/home.html" target="_blank" class="help-q">؟</a>
-<button type="button" class="add-btn" onclick="addField(this)">+</button>
-</span>
-</label>
-<input>
-</div>
-
-</div>
-</form>
-
-<div class="actions">
-<button onclick="updateDisplay()" class="main-btn" style="background:#4a90e2">تحديث</button>
-<button onclick="exportExcel()" class="main-btn" style="background:#27ae60">Excel</button>
-</div>
-
-<div class="output-box">
-<pre id="marcDisplay">LDR 00000nam a2200000 i 4500</pre>
-</div>
-
+    <div class="output-container">
+        <div class="output-header">
+            <span>MARC21 / RDA RECORD VIEW</span>
+            <span id="copyFeedback" style="color: #4ade80;"></span>
+        </div>
+        <pre id="marcDisplay">LDR 00000nam a2200000 i 4500</pre>
+    </div>
 </div>
 
 <script>
-function addField(btn){
- const group=btn.closest('.field-group');
- const clone=group.cloneNode(true);
- clone.querySelector('input').value='';
- group.parentNode.insertBefore(clone,group.nextSibling);
-}
+    function updateDisplay() {
+        let text = "LDR 00000nam a2200000 i 4500\n";
+        document.querySelectorAll('.field-row').forEach(row => {
+            const tag = row.dataset.tag;
+            const val = row.querySelector('input').value;
+            if(val) {
+                let ind1 = "#", ind2 = "#";
+                // تعيين مؤشرات تلقائية للتعلم
+                if(tag === "100") { ind1 = "1"; }
+                if(tag === "245") { ind1 = "1"; ind2 = "0"; }
+                if(tag === "082") { ind1 = "0"; ind2 = "4"; }
+                if(tag === "490") { ind1 = "0"; }
+                if(tag === "856") { ind1 = "4"; ind2 = "0"; }
+                
+                text += `${tag} ${ind1}${ind2} $a ${val}\n`;
+            }
+        });
+        document.getElementById('marcDisplay').innerText = text;
+    }
 
-function clearForm(){
- document.querySelectorAll('input').forEach(i=>i.value='');
- updateDisplay();
-}
+    function loadSample(type) {
+        clearForm();
+        const samples = {
+            book: {
+                "020": "978-603-01-1234-5", "082": "025.3", "100": "الخلف، صالح",
+                "245": "تطبيقات الفهرسة الحديثة", "490": "سلسلة علوم المكتبات ؛ 12",
+                "300": "250 ص ؛ 24 سم", "336": "نص (text)", "337": "غير مزود بجهاز (unmediated)", "338": "مجلد (volume)",
+                "500": "يحتوي على ملحقات تدريبية."
+            },
+            thesis: {
+                "100": "حمد، سارة", "245": "الفهرسة الموضوعية في البيئة الرقمية", "502": "أطروحة دكتوراه - جامعة الملك سعود",
+                "300": "410 ورقة ؛ 30 سم", "856": "https://repository.ksu.edu.sa", "650": "الفهرسة الموضوعية"
+            },
+            electronic: {
+                "245": "دليل الناشرين العرب [مورد إلكتروني]", "336": "نص (text)", "337": "كمبيوتر (computer)", 
+                "338": "مورد عبر الإنترنت (online resource)", "856": "http://www.arab-publishers.org",
+                "500": "يتم تحديث الرابط دورياً."
+            }
+        };
+        const data = samples[type];
+        Object.keys(data).forEach(tag => {
+            const el = document.querySelector(`[data-tag="${tag}"] input`);
+            if(el) el.value = data[tag];
+        });
+        updateDisplay();
+    }
 
-function updateDisplay(){
- let text="LDR 00000nam a2200000 i 4500\n";
- document.querySelectorAll('.field-group').forEach(g=>{
-  let tag=g.dataset.tag;
-  let val=g.querySelector('input').value;
-  if(val) text+=`${tag} ## $a ${val}\n`;
- });
- document.getElementById('marcDisplay').innerText=text;
-}
+    function clearForm() {
+        document.querySelectorAll('input').forEach(i => {
+            if(!["336","337","338"].includes(i.closest('.field-row').dataset.tag)) i.value = '';
+        });
+        updateDisplay();
+    }
 
-function exportExcel(){
- let rows=[["Tag","Data"]];
- document.querySelectorAll('.field-group').forEach(g=>{
-  let tag=g.dataset.tag;
-  let val=g.querySelector('input').value;
-  if(val) rows.push([tag,val]);
- });
- let ws=XLSX.utils.aoa_to_sheet(rows);
- let wb=XLSX.utils.book_new();
- XLSX.utils.book_append_sheet(wb,ws,"MARC");
- XLSX.writeFile(wb,"Emad_Kazem_MARC.xlsx");
-}
-
-function loadSample(type){
- clearForm();
- const samples={
-  book:{100:"السعدي، عماد كاظم",245:"أساسيات الفهرسة",650:"MARC21"},
-  thesis:{100:"التميمي، أحمد",245:"تطوير نظم المعلومات",502:"أطروحة"},
-  electronic:{245:"مجلة رقمية",650:"مصادر إلكترونية"}
- };
- Object.keys(samples[type]||{}).forEach(tag=>{
-  document.querySelector(`[data-tag="${tag}"] input`).value=samples[type][tag];
- });
- updateDisplay();
-}
+    function exportExcel() {
+        let rows = [["الحقل (Tag)", "المؤشرات", "البيانات (Subfield $a)"]];
+        document.querySelectorAll('.field-row').forEach(row => {
+            const val = row.querySelector('input').value;
+            if(val) rows.push([row.dataset.tag, "##", val]);
+        });
+        const ws = XLSX.utils.aoa_to_sheet(rows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "MARC_RDA");
+        XLSX.writeFile(wb, "Emad_Kazem_Full_Record.xlsx");
+    }
 </script>
+
 </body>
 </html>
